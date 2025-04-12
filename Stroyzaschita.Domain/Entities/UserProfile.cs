@@ -1,6 +1,6 @@
 ﻿namespace Stroyzaschita.Domain.Entities;
 
-class UserProfile {
+public class UserProfile {
     public Guid UserId {  get; set; }
 
     public string? Name { get; set; }
