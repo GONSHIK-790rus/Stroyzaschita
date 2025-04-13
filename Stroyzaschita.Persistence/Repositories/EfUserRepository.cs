@@ -16,26 +16,26 @@ class EfUserRepository : IUserRepository {
         await _AppDbContext.SaveChangesAsync();
     }
 
-    public async Task<User?> GetByIdAsync(Guid id) {
-        return await _AppDbContext.Users
+    public Task<User?> GetByIdAsync(Guid id) {
+        return _AppDbContext.Users
             .Include(user => user.UserProfile)
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public async Task<User?> GetByLoginAndPasswordAsync(string login, string passwordHash) {
-        return await _AppDbContext.Users
+    public Task<User?> GetByLoginAndPasswordAsync(string login, string passwordHash) {
+        return _AppDbContext.Users
             .Include(user => user.UserProfile)
             .FirstOrDefaultAsync(user => user.Login == login && user.PasswordHash == passwordHash);
     }
 
-    public async Task<User?> GetByLoginAsync(string login) {
-        return await _AppDbContext.Users
+    public Task<User?> GetByLoginAsync(string login) {
+        return _AppDbContext.Users
             .Include(user => user.UserProfile)
             .FirstOrDefaultAsync(user => user.Login == login);
     }
 
-    public async Task<bool> IsUserExistsAsync(string login) {
-        return await _AppDbContext.Users
+    public Task<bool> IsUserExistsAsync(string login) {
+        return _AppDbContext.Users
             .AnyAsync(user => user.Login == login);
     }
 }
