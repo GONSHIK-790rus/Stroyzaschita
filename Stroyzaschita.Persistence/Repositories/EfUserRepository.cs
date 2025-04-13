@@ -1,27 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Repositories;
+using Stroyzaschita.Persistence.Context;
 
 namespace Stroyzaschita.Persistence.Repositories;
 
 class EfUserRepository : IUserRepository {
-    public Task AddUserAsync(User user) {
-        throw new NotImplementedException();
+    private readonly AppDbContext _AppDbContext;
+    public EfUserRepository(AppDbContext appDbContext) {
+        _AppDbContext = appDbContext;
     }
 
-    public Task<User?> GetByIdAsync(Guid id) {
-        throw new NotImplementedException();
+    public async Task AddUserAsync(User user) {
+        _AppDbContext.Users.Add(user);
+        await _AppDbContext.SaveChangesAsync();
     }
 
-    public Task<User?> GetByLoginAndPasswordAsync(string login, string password) {
-        throw new NotImplementedException();
+    public async Task<User?> GetByIdAsync(Guid id) {
+        return await _AppDbContext.Users
+            .Include(user => user.UserProfile)
+            .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public Task<User?> GetByLoginAsync(string login) {
-        throw new NotImplementedException();
+    public async Task<User?> GetByLoginAndPasswordAsync(string login, string passwordHash) {
+        return await _AppDbContext.Users
+            .Include(user => user.UserProfile)
+            .FirstOrDefaultAsync(user => user.Login == login && user.PasswordHash == passwordHash);
     }
 
-    public Task<bool> IsUserExistsAsync(string login) {
-        throw new NotImplementedException();
+    public async Task<User?> GetByLoginAsync(string login) {
+        return await _AppDbContext.Users
+            .Include(user => user.UserProfile)
+            .FirstOrDefaultAsync(user => user.Login == login);
+    }
+
+    public async Task<bool> IsUserExistsAsync(string login) {
+        return await _AppDbContext.Users
+            .AnyAsync(user => user.Login == login);
     }
 }
