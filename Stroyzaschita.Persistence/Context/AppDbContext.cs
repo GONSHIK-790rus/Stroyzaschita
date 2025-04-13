@@ -3,7 +3,7 @@ using Stroyzaschita.Domain.Entities;
 
 namespace Stroyzaschita.Persistence.Context;
 
-class AppDbContext: DbContext {
+public class AppDbContext: DbContext {
     public AppDbContext(DbContextOptions<AppDbContext> options) 
         : base(options) 
     {

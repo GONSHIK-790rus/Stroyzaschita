@@ -5,7 +5,7 @@ using Stroyzaschita.Persistence.Context;
 
 namespace Stroyzaschita.Persistence.Repositories;
 
-class EfUserRepository : IUserRepository {
+public class EfUserRepository : IUserRepository {
     private readonly AppDbContext _AppDbContext;
     public EfUserRepository(AppDbContext appDbContext) {
         _AppDbContext = appDbContext;
