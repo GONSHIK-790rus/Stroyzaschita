@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.API", "Stroyzaschita.API\Stroyzaschita.API.csproj", "{28B8165E-99E0-4342-8DA4-5823BC8D8C18}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.Infrastructure", "Stroyzaschita.Infrastructure\Stroyzaschita.Infrastructure.csproj", "{D4AEAD75-F485-4A0A-B94A-3D60651D1E79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.Persistence", "Stroyzaschita.Persistence\Stroyzaschita.Persistence.csproj", "{5C4EE4B2-FA29-49CC-BDB9-619C2B55000F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.Shared", "Stroyzaschita.Shared\Stroyzaschita.Shared.csproj", "{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{5C4EE4B2-FA29-49CC-BDB9-619C2B55000F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C4EE4B2-FA29-49CC-BDB9-619C2B55000F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C4EE4B2-FA29-49CC-BDB9-619C2B55000F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,34 +1,42 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stroyzaschita.Domain.Entities;
+using Stroyzaschita.Shared.Constants;
 
 namespace Stroyzaschita.Persistence.Configurations;
 
 class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile> {
-    private const int _MAX_FIELD_LENGTH = 255;
-
     public void Configure(EntityTypeBuilder<UserProfile> builder) {
         builder.ToTable("users_data");
 
         builder.HasKey(userProfile => userProfile.UserId);
 
         builder.Property(userProfile => userProfile.UserId)
-            .HasColumnName("user_id");
+            .HasColumnName("user_id")
+            .IsRequired();
 
         builder.Property(userProfile => userProfile.Name)
             .HasColumnName("name")
-            .HasMaxLength(_MAX_FIELD_LENGTH);
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH);
+
+        builder.Property(userProfile => userProfile.ObjectName)
+            .HasColumnName("object_name")
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH);
 
         //
-        // TODO: CategoryId, ObjectName, Avatar, ContractExpiredAt. Спать хочу
+        // TODO: CategoryId, ContractExpiredAt
 
         builder.Property(userProfile => userProfile.PhoneNumber)
             .HasColumnName("phone_number")
-            .HasMaxLength(50);
+            .HasMaxLength(FieldLengths.PHONE_FIELD_LENGTH);
 
         builder.Property(userProfile => userProfile.Address)
             .HasColumnName("address")
-            .HasMaxLength(_MAX_FIELD_LENGTH);
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH);
+
+        builder.Property(userProfile => userProfile.Avatar)
+            .HasColumnName("avatar")
+            .HasColumnType("bytea"); // <- PostgreSQL specific type for byte array
 
     }
 }

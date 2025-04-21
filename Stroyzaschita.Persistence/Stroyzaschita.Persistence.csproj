@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Stroyzaschita.Application\Stroyzaschita.Application.csproj" />
     <ProjectReference Include="..\Stroyzaschita.Domain\Stroyzaschita.Domain.csproj" />
+    <ProjectReference Include="..\Stroyzaschita.Shared\Stroyzaschita.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Stroyzaschita.Application\Stroyzaschita.Application.csproj" />
     <ProjectReference Include="..\Stroyzaschita.Infrastructure\Stroyzaschita.Infrastructure.csproj" />
     <ProjectReference Include="..\Stroyzaschita.Persistence\Stroyzaschita.Persistence.csproj" />
+    <ProjectReference Include="..\Stroyzaschita.Shared\Stroyzaschita.Shared.csproj" />
   </ItemGroup>
 
 </Project>

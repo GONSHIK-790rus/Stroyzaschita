@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stroyzaschita.Domain.Entities;
+using Stroyzaschita.Shared.Constants;
 
 namespace Stroyzaschita.Persistence.Configurations;
 
 public class UserConfiguration : IEntityTypeConfiguration<User> {
-    private const int _MAX_FIELD_LENGTH = 255;
-
     public void Configure(EntityTypeBuilder<User> builder) {
         builder.ToTable("users");
         
@@ -14,17 +13,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User> {
 
         builder.Property(user => user.Id)
             .HasColumnName("id")
-            .HasMaxLength(_MAX_FIELD_LENGTH)
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
         builder.Property(user => user.Login)
             .HasColumnName("login")
-            .HasMaxLength(_MAX_FIELD_LENGTH)
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
         builder.Property(user => user.PasswordHash)
             .HasColumnName("password")
-            .HasMaxLength(_MAX_FIELD_LENGTH)
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
         builder.HasOne(user => user.UserProfile)
