@@ -1,4 +1,4 @@
-﻿namespace Stroyzaschita.Shared.DTOs;
+﻿namespace Stroyzaschita.Shared.DTOs.Auth;
 
 public class LoginRequest {
     public string Login { get; set; } = default!;
