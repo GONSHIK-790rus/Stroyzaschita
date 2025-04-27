@@ -26,6 +26,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User> {
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
+        builder.Property(user => user.PasswordSalt)
+            .HasColumnName("password_salt")
+            .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
+            .IsRequired();
+
         builder.Property(user => user.Role)
             .HasColumnName("role_id")
             .HasConversion<int>()

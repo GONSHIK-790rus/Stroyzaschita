@@ -16,10 +16,11 @@ class AuthService : IAuthService {
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest loginRequest) {
-        string passwordHash = HashPassword(loginRequest.Password);
-
-        User? user = await _IUserRepository.GetByLoginAndPasswordAsync(loginRequest.Login, passwordHash)
+        User? user = await _IUserRepository.GetByLoginAsync(loginRequest.Login)
             ?? throw new Exception("Неверный логин или пароль");
+        
+        if (user.PasswordHash != HashPassword(loginRequest.Password, user.PasswordSalt))
+            throw new Exception("Неверный логин или пароль");
 
         return new LoginResponse {
             Token = "temp", // Пока заглушка
@@ -32,9 +33,12 @@ class AuthService : IAuthService {
         if (await _IUserRepository.IsUserExistsAsync(registerRequest.Login))
             throw new Exception("Пользователь с таким логином уже существует");
 
+        string passwordSalt = GenerateSalt();
+
         User user = new User {
             Login = registerRequest.Login,
-            PasswordHash = HashPassword(registerRequest.Password),
+            PasswordHash = HashPassword(registerRequest.Password, passwordSalt),
+            PasswordSalt = passwordSalt,
             Role = UserRole.Customer,
 
             UserProfile = new UserProfile {
@@ -53,10 +57,17 @@ class AuthService : IAuthService {
         };
     }
 
-    private static string HashPassword(string password) {
+    private static string HashPassword(string password, string passwordSalt) {
         using SHA512? sha512 = SHA512.Create();
-        byte[]? passwordBytes = Encoding.UTF8.GetBytes(password);
-        byte[]? passwordHash = sha512.ComputeHash(passwordBytes);
+        byte[]? passwordAndSaltBytes = Encoding.UTF8.GetBytes(password + passwordSalt);
+        byte[]? passwordHash = sha512.ComputeHash(passwordAndSaltBytes);
         return Convert.ToBase64String(passwordHash);
+    }
+
+    private static string GenerateSalt() {
+        byte[] saltBytes = new byte[32];
+        using RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
+        randomNumberGenerator.GetBytes(saltBytes);
+        return Convert.ToBase64String(saltBytes);
     }
 }
