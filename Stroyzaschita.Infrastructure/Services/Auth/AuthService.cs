@@ -8,7 +8,7 @@ using Stroyzaschita.Shared.DTOs.Auth;
 
 namespace Stroyzaschita.Infrastructure.Services.Auth;
 
-class AuthService : IAuthService {
+public class AuthService : IAuthService {
     private readonly IUserRepository _IUserRepository;
 
     public AuthService(IUserRepository IUserRepository) {
@@ -58,9 +58,8 @@ class AuthService : IAuthService {
     }
 
     private static string HashPassword(string password, string passwordSalt) {
-        using SHA512? sha512 = SHA512.Create();
         byte[]? passwordAndSaltBytes = Encoding.UTF8.GetBytes(password + passwordSalt);
-        byte[]? passwordHash = sha512.ComputeHash(passwordAndSaltBytes);
+        byte[]? passwordHash = SHA512.HashData(passwordAndSaltBytes);
         return Convert.ToBase64String(passwordHash);
     }
 
