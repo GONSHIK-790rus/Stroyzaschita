@@ -35,7 +35,7 @@ public class AuthService : IAuthService {
 
         string passwordSalt = GenerateSalt();
 
-        User user = new User {
+        User user = new() {
             Login = registerRequest.Login,
             PasswordHash = HashPassword(registerRequest.Password, passwordSalt),
             PasswordSalt = passwordSalt,
