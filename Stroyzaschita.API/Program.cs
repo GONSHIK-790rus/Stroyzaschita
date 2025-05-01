@@ -27,7 +27,8 @@ builder.Services.AddAuthentication(options => {
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options => {
-    JwtSettings? jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new Exception("JwtSettings не найдены.");
+    JwtSettings? jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
+                                    ?? throw new Exception("JwtSettings не найдены.");
 
     options.TokenValidationParameters = new TokenValidationParameters {
         ValidateIssuer = true,
