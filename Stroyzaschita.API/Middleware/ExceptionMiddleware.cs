@@ -30,6 +30,7 @@ public class ExceptionMiddleware : IMiddleware {
 
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
+
             var response = new {
                 error = "An unexpected error occurred."
             };

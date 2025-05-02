@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Stroyzaschita.API.Middleware;
 using Stroyzaschita.Application;
 using Stroyzaschita.Application.Common.Settings;
 using Stroyzaschita.Infrastructure;
@@ -8,6 +9,8 @@ using Stroyzaschita.Shared;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddExceptionHandling();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -54,6 +57,7 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandling();
 app.UseAuthentication();
 app.UseAuthorization();
 
