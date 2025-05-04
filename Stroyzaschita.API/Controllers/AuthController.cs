@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Stroyzaschita.Application.Services.Auth;
 using Stroyzaschita.Shared.DTOs.Auth;
 
@@ -7,21 +8,22 @@ namespace Stroyzaschita.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController: ControllerBase {
-    private readonly IAuthService _IAuthService;
+    private readonly IAuthService _authService;
 
-    public AuthController(IAuthService IAuthService) {
-        _IAuthService = IAuthService;
+    public AuthController(IAuthService authService) {
+        _authService = authService;
     }
 
+    [Authorize(Roles = "Admin, Contractor")]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest) {
-        LoginResponse? result = await _IAuthService.RegisterAsync(registerRequest);
-        return Ok(result);
+        await _authService.RegisterAsync(registerRequest);
+        return Ok("User was successfully created.");
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest) {
-        LoginResponse? result = await _IAuthService.LoginAsync(loginRequest);
+        LoginResponse? result = await _authService.LoginAsync(loginRequest);
         return Ok(result);
     }
 }

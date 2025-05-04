@@ -19,7 +19,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator {
         Claim[] claims = [
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.UniqueName, login),
-            new Claim(ClaimTypes.Role, role)
+            new Claim(ClaimTypes.Role, role),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
         ];
 
         SymmetricSecurityKey symmetricSecurityKey = new (Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
@@ -29,6 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator {
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
+            notBefore: DateTime.UtcNow,
             expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
             signingCredentials: signingCredentials
         );

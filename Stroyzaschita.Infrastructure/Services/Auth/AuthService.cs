@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Stroyzaschita.Application.Common.Interfaces.Auth;
 using Stroyzaschita.Application.Services.Auth;
 using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Enums;
@@ -9,28 +10,30 @@ using Stroyzaschita.Shared.DTOs.Auth;
 namespace Stroyzaschita.Infrastructure.Services.Auth;
 
 public class AuthService : IAuthService {
-    private readonly IUserRepository _IUserRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthService(IUserRepository IUserRepository) {
-        _IUserRepository = IUserRepository;
+    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator) {
+        _userRepository = userRepository;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest loginRequest) {
-        User? user = await _IUserRepository.GetByLoginAsync(loginRequest.Login)
+        User? user = await _userRepository.GetByLoginAsync(loginRequest.Login)
             ?? throw new Exception("Неверный логин или пароль");
         
         if (user.PasswordHash != HashPassword(loginRequest.Password, user.PasswordSalt))
             throw new Exception("Неверный логин или пароль");
 
         return new LoginResponse {
-            Token = "temp", // Пока заглушка
+            Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Login, user.Role.ToString()),
             UserId = user.Id,
             Login = user.Login
         };
     }
 
-    public async Task<LoginResponse> RegisterAsync(RegisterRequest registerRequest) {
-        if (await _IUserRepository.IsUserExistsAsync(registerRequest.Login))
+    public async Task RegisterAsync(RegisterRequest registerRequest) {
+        if (await _userRepository.IsUserExistsAsync(registerRequest.Login))
             throw new Exception("Пользователь с таким логином уже существует");
 
         string passwordSalt = GenerateSalt();
@@ -48,13 +51,7 @@ public class AuthService : IAuthService {
             }
         };
 
-        await _IUserRepository.AddUserAsync(user);
-
-        return new LoginResponse {
-            Token = "temp", // Пока заглушка
-            UserId = user.Id,
-            Login = user.Login
-        };
+        await _userRepository.AddUserAsync(user);
     }
 
     private static string HashPassword(string password, string passwordSalt) {
