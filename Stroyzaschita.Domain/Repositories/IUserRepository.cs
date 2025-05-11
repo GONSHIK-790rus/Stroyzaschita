@@ -8,4 +8,5 @@ public interface IUserRepository {
     Task <User?> GetByLoginAndPasswordAsync(string login, string password);
     Task AddUserAsync(User user);
     Task<bool> IsUserExistsAsync(string login);
+    Task SaveChangesAsync();
 }

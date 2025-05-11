@@ -12,4 +12,5 @@ public class User {
     public UserRole Role { get; set; }
 
     public UserProfile? UserProfile { get; set; }
+    public ICollection<Request> Requests { get; set; } = new List<Request>();
 }

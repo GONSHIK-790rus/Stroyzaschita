@@ -13,6 +13,7 @@ public static class DependencyInjection {
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, EfUserRepository>();
+        services.AddScoped<IRequestRepository, EfRequestRepository>();
 
         return services;
     }

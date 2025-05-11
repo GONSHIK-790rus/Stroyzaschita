@@ -1,0 +1,37 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Stroyzaschita.Domain.Entities;
+using Stroyzaschita.Domain.Enums;
+using Stroyzaschita.Domain.Repositories;
+using Stroyzaschita.Shared.DTOs.Requests;
+using System.Security.Claims;
+
+namespace Stroyzaschita.API.Controllers;
+
+public class RequestController: ControllerBase {
+    private readonly IRequestRepository _requestRepository;
+
+    public RequestController(IRequestRepository requestRepository) {
+        _requestRepository = requestRepository;
+    }
+
+    [Authorize]
+    [HttpPost("/api/requests")]
+    public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDto dto) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdString is null || !Guid.TryParse(userIdString, out var userId))
+            return Unauthorized();
+
+        Request request = new() {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Title = dto.Title,
+            Description = dto.Description,
+            Status = RequestStatus.Sent,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _requestRepository.AddAsync(request);
+        return Ok();
+    }
+}

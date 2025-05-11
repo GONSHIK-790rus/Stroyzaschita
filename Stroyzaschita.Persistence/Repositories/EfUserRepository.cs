@@ -38,4 +38,8 @@ public class EfUserRepository : IUserRepository {
         return _AppDbContext.Users
             .AnyAsync(user => user.Login == login);
     }
+
+    public Task SaveChangesAsync() {
+        return _AppDbContext.SaveChangesAsync();
+    }
 }

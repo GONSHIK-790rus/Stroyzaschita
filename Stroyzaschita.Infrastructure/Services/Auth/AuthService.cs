@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Stroyzaschita.Application.Common.Interfaces.Auth;
+using Stroyzaschita.Application.Exceptions;
 using Stroyzaschita.Application.Services.Auth;
 using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Enums;
@@ -20,21 +21,20 @@ public class AuthService : IAuthService {
 
     public async Task<LoginResponse> LoginAsync(LoginRequest loginRequest) {
         User? user = await _userRepository.GetByLoginAsync(loginRequest.Login)
-            ?? throw new Exception("Неверный логин или пароль");
-        
+            ?? throw new InvalidAccountDataException();
+
         if (user.PasswordHash != HashPassword(loginRequest.Password, user.PasswordSalt))
-            throw new Exception("Неверный логин или пароль");
+            throw new InvalidAccountDataException();
 
         return new LoginResponse {
             Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Login, user.Role.ToString()),
-            UserId = user.Id,
             Login = user.Login
         };
     }
 
     public async Task RegisterAsync(RegisterRequest registerRequest) {
         if (await _userRepository.IsUserExistsAsync(registerRequest.Login))
-            throw new Exception("Пользователь с таким логином уже существует");
+            throw new UserAlreadyExistsException();
 
         string passwordSalt = GenerateSalt();
 
