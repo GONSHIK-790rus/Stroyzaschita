@@ -1,4 +1,5 @@
-﻿using Stroyzaschita.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Persistence.Context;
 
@@ -14,5 +15,11 @@ public class EfRequestRepository: IRequestRepository {
     public async Task AddAsync(Request request) {
         _appDbContext.Requests.Add(request);
         await _appDbContext.SaveChangesAsync();
+    }
+
+    public Task<Request?> GetByIdAsync(Guid id) {
+        return _appDbContext.Requests
+            .Include(request => request.User)
+            .FirstOrDefaultAsync(request => request.Id == id);
     }
 }

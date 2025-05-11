@@ -32,6 +32,16 @@ public class RequestController: ControllerBase {
         };
 
         await _requestRepository.AddAsync(request);
-        return Ok();
+        return CreatedAtAction(nameof(GetRequestById), new { id = request.Id}, request);
+    }
+
+    [Authorize]
+    [HttpGet("api/requests/{id:Guid}")]
+    public async Task<IActionResult> GetRequestById(Guid id) {
+        var request = await _requestRepository.GetByIdAsync(id);
+        if (request is null)
+            return NotFound();
+
+        return Ok(request);
     }
 }
