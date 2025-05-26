@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.Persistence",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.Shared", "Stroyzaschita.Shared\Stroyzaschita.Shared.csproj", "{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroyzaschita.UI", "Stroyzaschita.UI\Stroyzaschita.UI.csproj", "{E2D20ADC-FC51-4DB3-A751-F0440E2DFEA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0462E0A8-0895-4F0E-AC36-97E8E9D5B75A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2D20ADC-FC51-4DB3-A751-F0440E2DFEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2D20ADC-FC51-4DB3-A751-F0440E2DFEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2D20ADC-FC51-4DB3-A751-F0440E2DFEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2D20ADC-FC51-4DB3-A751-F0440E2DFEA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

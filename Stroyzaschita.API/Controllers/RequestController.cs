@@ -17,7 +17,7 @@ public class RequestController: ControllerBase {
 
     [Authorize]
     [HttpPost("/api/requests")]
-    public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDto dto) {
+    public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDto createRequestDto) {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdString is null || !Guid.TryParse(userIdString, out var userId))
             return Unauthorized();
@@ -25,8 +25,8 @@ public class RequestController: ControllerBase {
         Request request = new() {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Title = dto.Title,
-            Description = dto.Description,
+            Title = createRequestDto.Title,
+            Description = createRequestDto.Description,
             Status = RequestStatus.Sent,
             CreatedAt = DateTime.UtcNow
         };
