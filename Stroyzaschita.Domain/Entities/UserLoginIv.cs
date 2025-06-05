@@ -1,10 +1,8 @@
 ﻿namespace Stroyzaschita.Domain.Entities;
 
-public class UserAddresses {
-    public int Id { get; set; }
+public class UserLoginIv {
     public Guid UserId { get; set; }
-
-    public string Address { get; set; } = default!;
+    public string Iv { get; set; } = default!;
 
     public User User { get; set; } = default!;
 }

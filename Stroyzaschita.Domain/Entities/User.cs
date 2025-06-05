@@ -1,6 +1,4 @@
-﻿using Stroyzaschita.Domain.Enums;
-
-namespace Stroyzaschita.Domain.Entities;
+﻿namespace Stroyzaschita.Domain.Entities;
 
 public class User {
     public Guid Id { get; set; }
@@ -13,5 +11,8 @@ public class User {
     public UserRole Role { get; set; } = default!;
 
     public UserProfile UserProfile { get; set; } = default!;
-    public ICollection<UserAddress> Addresses { get; set; } = [];
+    public ICollection<UserAddresses> Addresses { get; set; } = [];
+    public ICollection<Request> Requests { get; set; } = [];
+
+    public UserLoginIv LoginIv { get; set; } = default!;
 }
