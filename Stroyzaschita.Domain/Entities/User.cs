@@ -9,8 +9,9 @@ public class User {
     public string PasswordHash { get; set; } = default!;
     public string PasswordSalt { get; set; } = default!;
 
-    public UserRole Role { get; set; }
+    public int RoleId { get; set; }
+    public UserRole Role { get; set; } = default!;
 
-    public UserProfile? UserProfile { get; set; }
-    public ICollection<Request> Requests { get; set; } = new List<Request>();
+    public UserProfile UserProfile { get; set; } = default!;
+    public ICollection<UserAddress> Addresses { get; set; } = [];
 }

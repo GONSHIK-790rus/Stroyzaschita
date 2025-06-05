@@ -31,10 +31,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User> {
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
-        builder.Property(user => user.Role)
-            .HasColumnName("role_id")
-            .HasConversion<int>()
-            .IsRequired();
+        builder.HasOne(user => user.Role)
+            .WithMany()
+            .HasForeignKey(user => user.RoleId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(user => user.UserProfile)
             .WithOne(userProfile => userProfile.User)

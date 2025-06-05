@@ -1,13 +1,12 @@
 ﻿namespace Stroyzaschita.Domain.Entities;
 
 public class UserProfile {
-    public Guid UserId {  get; set; }
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = default!;
     public string? ObjectName { get; set; }
-    public string? PhoneNumber { get; set; }
-    public string? Address { get; set; }
-    public byte[]? Avatar { get; set; }
+    public string PhoneNumber { get; set; } = default!;
 
-    public User? User { get; set; }
+    public User User { get; set; } = default!;
 }
