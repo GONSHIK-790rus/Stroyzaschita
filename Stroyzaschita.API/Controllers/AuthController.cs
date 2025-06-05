@@ -16,12 +16,19 @@ public class AuthController: ControllerBase {
 
     [Authorize(Roles = "Admin, Contractor")]
     [HttpPost("register")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest) {
         await _authService.RegisterAsync(registerRequest);
         return Ok("User was successfully created.");
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest) {
         LoginResponse? result = await _authService.LoginAsync(loginRequest);
         return Ok(result);

@@ -17,6 +17,9 @@ public class RequestController: ControllerBase {
 
     [Authorize]
     [HttpPost("/api/requests")]
+    [ProducesResponseType(typeof(Request), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDto createRequestDto) {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdString is null || !Guid.TryParse(userIdString, out var userId))
@@ -37,6 +40,9 @@ public class RequestController: ControllerBase {
 
     [Authorize]
     [HttpGet("api/requests/{id:Guid}")]
+    [ProducesResponseType(typeof(Request), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetRequestById(Guid id) {
         var request = await _requestRepository.GetByIdAsync(id);
         if (request is null)

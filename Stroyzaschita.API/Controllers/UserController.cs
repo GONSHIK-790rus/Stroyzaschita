@@ -19,6 +19,9 @@ public class UserController: ControllerBase {
 
     [Authorize]
     [HttpGet("me")]
+    [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCurrentUserProfile() {
         string? userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -43,6 +46,10 @@ public class UserController: ControllerBase {
 
     [Authorize]
     [HttpPut("me")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateCurrentUserProfile([FromBody] UpdateProfileDto dto) {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdString is null || !Guid.TryParse(userIdString, out var userId))

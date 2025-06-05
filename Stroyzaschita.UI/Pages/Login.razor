@@ -1,0 +1,45 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div style="width: 500px; height: 500px; border: 2px solid black; border-radius: 12px; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+
+            <MudTextField @bind-Value="loginModel.Email"
+                          Label="Логин"
+                          Variant="Variant.Outlined"
+                          Class="w-full" />
+
+            <MudTextField @bind-Value="loginModel.Password"
+                          Label="Пароль"
+                          InputType="InputType.Password"
+                          Variant="Variant.Outlined"
+                          Class="w-full" />
+
+            <MudButton Type="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Class="w-full">
+                Войти
+            </MudButton>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new();
+
+    private async Task HandleLogin()
+    {
+        // TODO: подключение к API
+    }
+
+    public class LoginModel
+    {
+        [Required]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}

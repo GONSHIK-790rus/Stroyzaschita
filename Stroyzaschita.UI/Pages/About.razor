@@ -1,11 +1,19 @@
 ﻿@page "/about"
+<PageTitle>О нас</PageTitle>
 @using MudBlazor
 
-<PageTitle>О нас</PageTitle>
-
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
-    <MudText Typo="Typo.h4" Class="mb-2">О нашей компании</MudText>
-    <MudText Typo="Typo.subtitle1">
-        СТРОЙЗАЩИТА — это команда профессионалов, которая может помочь Вам со сдачей опрессовок, ТО кондиционеров или водоснабжения. Мы сопровождаем проекты от начала до завершения, гарантируя результат.
-    </MudText>
-</MudContainer>
+<MudLayout>
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-12 text-center">
+        <MudPaper Elevation="3" Class="pa-8 rounded-xl">
+            <MudText Typo="Typo.h4" Class="mb-4">О компании</MudText>
+            <MudText Typo="Typo.body1" Class="mb-4">
+                Компания "Стройзащита" специализируется на цифровом сопровождении строительных проектов,
+                юридической поддержке и автоматизации документооборота. Мы помогаем бизнесу работать проще и безопаснее.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                С нами сотрудничают десятки строительных организаций по всей стране.
+                Наша цель - сделать юридическую защиту доступной и технологичной.
+            </MudText>
+        </MudPaper>
+    </MudContainer>
+</MudLayout>
