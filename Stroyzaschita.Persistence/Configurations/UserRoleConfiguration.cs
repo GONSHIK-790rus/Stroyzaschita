@@ -9,13 +9,13 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole> {
     public void Configure(EntityTypeBuilder<UserRole> builder) {
         builder.ToTable("roles");
 
-        builder.HasKey(r => r.Id);
+        builder.HasKey(userRole => userRole.Id);
 
-        builder.Property(r => r.Id)
+        builder.Property(userRole => userRole.Id)
             .HasColumnName("id")
             .IsRequired();
 
-        builder.Property(r => r.Name)
+        builder.Property(userRole => userRole.Name)
             .HasColumnName("name")
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();

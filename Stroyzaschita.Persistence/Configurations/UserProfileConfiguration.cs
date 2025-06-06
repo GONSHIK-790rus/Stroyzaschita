@@ -15,6 +15,9 @@ class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile> {
             .HasColumnName("user_id")
             .IsRequired();
 
+        builder.Property(userProfile => userProfile.CategoryId)
+            .HasColumnName("category_id");
+
         builder.Property(userProfile => userProfile.Name)
             .HasColumnName("name")
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH);
@@ -23,12 +26,10 @@ class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile> {
             .HasColumnName("object_name")
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH);
 
-        //
-        // TODO: CategoryId, ContractExpiredAt
-
         builder.Property(userProfile => userProfile.PhoneNumber)
             .HasColumnName("phone_number")
-            .HasMaxLength(FieldLengths.PHONE_FIELD_LENGTH);
+            .HasMaxLength(FieldLengths.PHONE_FIELD_LENGTH)
+            .IsRequired();
 
         builder.Property(userProfile => userProfile.Address)
             .HasColumnName("address")
@@ -37,6 +38,15 @@ class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile> {
         builder.Property(userProfile => userProfile.Avatar)
             .HasColumnName("avatar")
             .HasColumnType("bytea"); // <- PostgreSQL specific type for byte array
+
+        builder.Property(userProfile => userProfile.ContractExpiredAt)
+            .HasColumnName("contract_expired_at")
+            .IsRequired();
+
+        builder.HasOne(userProfile => userProfile.User)
+            .WithOne(user => user.UserProfile)
+            .HasForeignKey<UserProfile>(userProfile => userProfile.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 }
