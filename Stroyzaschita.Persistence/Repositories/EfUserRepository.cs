@@ -19,18 +19,21 @@ public class EfUserRepository : IUserRepository {
     public Task<User?> GetByIdAsync(Guid id) {
         return _AppDbContext.Users
             .Include(user => user.UserProfile)
+            .Include(user => user.Role)
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
     public Task<User?> GetByLoginAndPasswordAsync(string login, string passwordHash) {
         return _AppDbContext.Users
             .Include(user => user.UserProfile)
+            .Include(user => user.Role)
             .FirstOrDefaultAsync(user => user.Login == login && user.PasswordHash == passwordHash);
     }
 
     public Task<User?> GetByLoginAsync(string login) {
         return _AppDbContext.Users
             .Include(user => user.UserProfile)
+            .Include(user => user.Role)
             .FirstOrDefaultAsync(user => user.Login == login);
     }
 

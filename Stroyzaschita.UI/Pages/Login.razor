@@ -3,12 +3,12 @@
 
 <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="width: 500px; height: 500px; border: 2px solid black; border-radius: 12px; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+        <div style="width: 300px; height: 300px; border: 2px solid black; border-radius: 12px; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
 
             <MudTextField @bind-Value="loginModel.Email"
                           Label="Логин"
                           Variant="Variant.Outlined"
-                          Class="w-full" />
+                          Class="custom-rounded-textfield" />
 
             <MudTextField @bind-Value="loginModel.Password"
                           Label="Пароль"
@@ -19,7 +19,7 @@
             <MudButton Type="ButtonType.Submit"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
-                       Class="w-full">
+                       Class="rounded-lg">
                 Войти
             </MudButton>
         </div>

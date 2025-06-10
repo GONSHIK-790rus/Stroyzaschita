@@ -16,6 +16,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User> {
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
             .IsRequired();
 
+        builder.Property(user => user.RoleId)
+            .HasColumnName("role_id")
+            .HasColumnType("smallint");
+
         builder.Property(user => user.Login)
             .HasColumnName("login")
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
@@ -34,7 +38,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User> {
         builder.HasOne(user => user.Role)
             .WithMany()
             .HasForeignKey(user => user.RoleId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(user => user.UserProfile)

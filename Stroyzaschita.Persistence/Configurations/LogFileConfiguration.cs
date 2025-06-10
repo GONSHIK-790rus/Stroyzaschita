@@ -15,6 +15,10 @@ public class LogFileConfiguration : IEntityTypeConfiguration<LogFile> {
             .HasColumnName("id")
             .IsRequired();
 
+        builder.Property(log_file => log_file.UserId)
+            .HasColumnName("user_id")
+            .IsRequired();
+
         builder.Property(logFile => logFile.FileName)
             .HasColumnName("file_name")
             .HasMaxLength(FieldLengths.DEFAULT_FIELD_LENGTH)
@@ -28,5 +32,10 @@ public class LogFileConfiguration : IEntityTypeConfiguration<LogFile> {
         builder.Property(logFile => logFile.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
+
+        builder.HasOne(log_file => log_file.User)
+            .WithMany()
+            .HasForeignKey(log_file => log_file.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

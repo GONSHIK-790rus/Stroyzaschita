@@ -8,6 +8,9 @@ using System.Security.Claims;
 
 namespace Stroyzaschita.API.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
 public class RequestController: ControllerBase {
     private readonly IRequestRepository _requestRepository;
 

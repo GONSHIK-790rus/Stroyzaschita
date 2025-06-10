@@ -1,5 +1,4 @@
-﻿
-using Stroyzaschita.Application.Exceptions;
+﻿using Stroyzaschita.Application.Exceptions;
 using System.Net;
 using System.Text.Json;
 

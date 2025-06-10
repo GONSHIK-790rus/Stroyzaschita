@@ -7,7 +7,7 @@ public class User {
     public string PasswordHash { get; set; } = default!;
     public string PasswordSalt { get; set; } = default!;
 
-    public int RoleId { get; set; }
+    public short? RoleId { get; set; }
     public UserRole Role { get; set; } = default!;
 
     public UserProfile UserProfile { get; set; } = default!;

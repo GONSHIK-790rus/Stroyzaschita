@@ -42,7 +42,7 @@ public class AuthService : IAuthService {
             Login = registerRequest.Login,
             PasswordHash = HashPassword(registerRequest.Password, passwordSalt),
             PasswordSalt = passwordSalt,
-            Role = UserRole.Customer,
+            //Role = UserRole.Customer,
 
             UserProfile = new UserProfile {
                 Name = registerRequest.Name,
