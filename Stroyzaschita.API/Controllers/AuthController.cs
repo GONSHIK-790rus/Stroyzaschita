@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Stroyzaschita.Application.Services.Auth;
 using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Shared.DTOs.Auth;
-using Stroyzaschita.Shared.DTOs.User;
 
 namespace Stroyzaschita.API.Controllers;
 

@@ -15,6 +15,7 @@ public static class DependencyInjection {
 
         services.AddScoped<IUserRepository, EfUserRepository>();
         services.AddScoped<IRequestRepository, EfRequestRepository>();
+        services.AddScoped<IMessageRepository, EfMessageRepository>();
 
         return services;
     }

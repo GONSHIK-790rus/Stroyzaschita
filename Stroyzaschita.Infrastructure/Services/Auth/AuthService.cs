@@ -4,7 +4,6 @@ using Stroyzaschita.Application.Common.Interfaces.Auth;
 using Stroyzaschita.Application.Exceptions;
 using Stroyzaschita.Application.Services.Auth;
 using Stroyzaschita.Domain.Entities;
-using Stroyzaschita.Domain.Enums;
 using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Shared.DTOs.Auth;
 
