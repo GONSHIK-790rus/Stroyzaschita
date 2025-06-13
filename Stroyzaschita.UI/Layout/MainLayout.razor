@@ -1,26 +1,52 @@
-﻿@inherits LayoutComponentBase
+﻿@using Stroyzaschita.UI.Contexts
+@using Stroyzaschita.UI.Interfaces
+@using Stroyzaschita.UI.Services
+@using System.Net.Http.Headers
+@using Stroyzaschita.Shared.DTOs.User
+
+@inject NavigationManager NavigationManager
+@inject TokenStorage TokenStorage
+@inject AuthContext AuthContext
+@inject IAuthService AuthService
+@inject HttpClient _http
+
+@inherits LayoutComponentBase
 
 <MudLayout>
     <a href="/">
         <img src="images/logo_stroyzaschita.png" alt="Логотип"
-             style="position: absolute; top: 20px; left: 20px; height: 80px; width: auto; z-index: 1000;" />
+        style="position: absolute; top: 20px; left: 20px; height: 80px; width: auto; z-index: 1000;" />
     </a>
 
-    <MudButton Color="Color.Primary"
-               Variant="Variant.Filled"
-               Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
-               class="rounded-lg"
-               Href="/login">
-        Войти
-    </MudButton>
+    @if (AuthContext.IsAuthenticated) {
+            <MudButton Color="Color.Primary"
+            Variant="Variant.Filled"
+            Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
+            class="rounded-lg"
+            OnClick="Logout">
+                Выйти
+            </MudButton>
+    }
+    else {
+        <MudButton Color="Color.Primary"
+        Variant="Variant.Filled"
+        Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
+        class="rounded-lg"
+        Href="/login">
+            Войти
+        </MudButton>
+    }
 
     <MudAppBar Style="position: relative" Elevation="0" Color="Color.Default" Class="py-6">
         <MudTabs Rounded="true" Border="false" Dense="true" Centered="true" Class="mt-4" Style="margin: 0 auto;">
             <MudTabPanel Text="Главная" @onclick='() => NavigateTo("/")' />
             <MudTabPanel Text="О нас" @onclick='() => NavigateTo("/about")' />
-            <MudTabPanel Text="Контакты" @onclick='() => NavigateTo("/contacts")'/>
+            <MudTabPanel Text="Контакты" @onclick='() => NavigateTo("/contacts")' />
             <MudTabPanel Text="Создать заявку" @onclick='() => NavigateTo("/make-request")' />
             <MudTabPanel Text="Чат" @onclick='() => NavigateTo("/chat")' />
+            @if (AuthContext.Role == "Admin") {
+                <MudTabPanel Text="Админка" @onclick='() => NavigateTo("/admin")' />
+            }
         </MudTabs>
     </MudAppBar>
 
@@ -34,7 +60,40 @@
 </MudLayout>
 
 @code {
-    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+    void NavigateTo(string url) {
+        var protectedRoutes = new[] { "/make-request", "/chat" };
+        if (protectedRoutes.Contains(url) && !AuthService.IsAuthorized())
+            NavigationManager.NavigateTo("/unauthorized");
+        else
+            NavigationManager.NavigateTo(url);
+    }
 
-    void NavigateTo(string url) => NavigationManager.NavigateTo(url);
+    protected override async Task OnInitializedAsync() {
+
+        var token = await TokenStorage.GetTokenAsync();
+        if (!string.IsNullOrWhiteSpace(token)) {
+            AuthContext.IsAuthenticated = true;
+            AuthContext.Token = token;
+            AuthContext.InitializeFromToken(token);
+
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            try {
+                var user = await _http.GetFromJsonAsync<UserDto>("api/Users/full-user");
+                AuthContext.CurrentUser = user;
+                Console.WriteLine($"Пользователь загружен: {AuthContext.CurrentUser?.Name}, Роль: {AuthContext.CurrentUser?.Role} {AuthContext.CurrentUser?.Login}");
+            }
+            catch {
+                await Logout();
+            }
+        }
+    }
+
+    private async Task Logout() {
+        await TokenStorage.RemoveTokenAsync();
+        AuthContext.IsAuthenticated = false;
+        AuthContext.CurrentUser = null;
+        AuthContext.Token = null;
+        _http.DefaultRequestHeaders.Authorization = null;
+        NavigationManager.NavigateTo("/");
+    }
 }

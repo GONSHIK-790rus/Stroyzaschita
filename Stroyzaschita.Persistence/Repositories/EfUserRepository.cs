@@ -23,6 +23,13 @@ public class EfUserRepository : IUserRepository {
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
+    public async Task<User?> GetByIdWithProfileAsync(Guid userId) {
+        return await _AppDbContext.Users
+            .Include(user => user.UserProfile)
+            .Include(user => user.Role)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+    }
+
     public Task<User?> GetByLoginAndPasswordAsync(string login, string passwordHash) {
         return _AppDbContext.Users
             .Include(user => user.UserProfile)

@@ -27,7 +27,7 @@ public class AuthService : IAuthService {
             throw new InvalidAccountDataException();
 
         return new LoginResponse {
-            Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Login, user.Role.ToString()),
+            Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Login, user.Role.Name),
             Login = user.Login
         };
     }

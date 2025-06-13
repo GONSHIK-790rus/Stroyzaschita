@@ -4,8 +4,9 @@ namespace Stroyzaschita.Domain.Repositories;
 
 public interface IUserRepository {
     Task<User?> GetByIdAsync(Guid id);
+    Task<User?> GetByIdWithProfileAsync(Guid userId);
     Task<User?> GetByLoginAsync(string login);
-    Task <User?> GetByLoginAndPasswordAsync(string login, string password);
+    Task<User?> GetByLoginAndPasswordAsync(string login, string password);
     Task AddUserAsync(User user);
     Task<bool> IsUserExistsAsync(string login);
     Task SaveChangesAsync();
