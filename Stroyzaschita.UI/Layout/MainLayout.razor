@@ -1,3 +1,40 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<MudLayout>
+    <a href="/">
+        <img src="images/logo_stroyzaschita.png" alt="Логотип"
+             style="position: absolute; top: 20px; left: 20px; height: 80px; width: auto; z-index: 1000;" />
+    </a>
+
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
+               class="rounded-lg"
+               Href="/login">
+        Войти
+    </MudButton>
+
+    <MudAppBar Style="position: relative" Elevation="0" Color="Color.Default" Class="py-6">
+        <MudTabs Rounded="true" Border="false" Dense="true" Centered="true" Class="mt-4" Style="margin: 0 auto;">
+            <MudTabPanel Text="Главная" @onclick='() => NavigateTo("/")' />
+            <MudTabPanel Text="О нас" @onclick='() => NavigateTo("/about")' />
+            <MudTabPanel Text="Контакты" @onclick='() => NavigateTo("/contacts")'/>
+            <MudTabPanel Text="Создать заявку" @onclick='() => NavigateTo("/make-request")' />
+            <MudTabPanel Text="Чат" @onclick='() => NavigateTo("/chat")' />
+        </MudTabs>
+    </MudAppBar>
+
+    <MudDivider Class="my-0" Style="height: 3px; background-color: black; width: 100vw;" />
+
+    <MudContainer MaxWidth="MaxWidth.False" Style="padding: 20px; height: calc(100vh - 120px); box-sizing: border-box;">
+        <MudPaper Class="pa-6" Elevation="1" Style="width: 100%; height: 100%; border: 2px solid black; border-radius: 16px;">
+            @Body
+        </MudPaper>
+    </MudContainer>
+</MudLayout>
+
+@code {
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+
+    void NavigateTo(string url) => NavigationManager.NavigateTo(url);
+}

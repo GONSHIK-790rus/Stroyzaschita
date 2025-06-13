@@ -1,0 +1,13 @@
+﻿@page "/unauthorized"
+
+<PageTitle>Нет доступа</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-10">
+    <MudPaper Elevation="2" Class="pa-5 rounded text-center">
+        <MudText Typo="Typo.h5" Class="mb-2">Доступ запрещён</MudText>
+        <MudText Typo="Typo.body1">
+            Для доступа к этой странице необходимо авторизоваться.
+        </MudText>
+        <MudButton Href="/login" Color="Color.Primary" Class="mt-4">Войти</MudButton>
+    </MudPaper>
+</MudContainer>

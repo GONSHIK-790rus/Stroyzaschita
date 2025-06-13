@@ -1,25 +1,44 @@
 ﻿@page "/login"
+
 @using System.ComponentModel.DataAnnotations
+@using MudBlazor
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
-<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+<PageTitle>Вход в систему</PageTitle>
+
+<a href="/">
+    <img src="images/logo_stroyzaschita.png" alt="Логотип"
+         style="position: absolute; top: 20px; left: 20px; height: 150px; width: auto;" />
+</a>
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin" OnInvalidSubmit="HandleInvalid">
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="width: 300px; height: 300px; border: 2px solid black; border-radius: 12px; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+        <div style="width: 300px; height: 450px; border: 2px solid black; border-radius: 12px; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
 
-            <MudTextField @bind-Value="loginModel.Email"
+            <MudText Typo="Typo.h4" Class="mb-2" Align="Align.Center">
+                Добро пожаловать!
+            </MudText>
+
+            <MudTextField @bind-Value="loginModel.Login"
                           Label="Логин"
                           Variant="Variant.Outlined"
-                          Class="custom-rounded-textfield" />
+                          For="@(() => loginModel.Login)"
+                          Class="mb-2" />
 
             <MudTextField @bind-Value="loginModel.Password"
                           Label="Пароль"
                           InputType="InputType.Password"
                           Variant="Variant.Outlined"
+                          For="@(() => loginModel.Password)"
                           Class="w-full" />
 
-            <MudButton Type="ButtonType.Submit"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       Class="rounded-lg">
+            <MudButton ButtonType="ButtonType.Submit"
+                          OnClick="HandleLogin"
+                          Variant="Variant.Filled"
+                          Color="Color.Primary"
+                          Class="rounded-lg">
                 Войти
             </MudButton>
         </div>
@@ -29,15 +48,34 @@
 @code {
     private LoginModel loginModel = new();
 
-    private async Task HandleLogin()
-    {
-        // TODO: подключение к API
+    private async Task HandleLogin() {
+        try {
+            var response = await HttpClient.PostAsJsonAsync("api/Auth/login", loginModel);
+
+            if (response.IsSuccessStatusCode) {
+                var token = await response.Content.ReadAsStringAsync();
+
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
+                NavigationManager.NavigateTo("/");
+            }
+            else {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Ошибка входа: {error}");
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Ошибка авторизации: {ex.Message}");
+        }
     }
 
-    public class LoginModel
-    {
+    private void HandleInvalid() {
+        Console.WriteLine("Форма НЕ прошла валидацию");
+        JSRuntime.InvokeVoidAsync("console.log", "НЕ ВАЛИДНА ФОРМА");
+    }
+
+    public class LoginModel {
         [Required]
-        public string Email { get; set; } = string.Empty;
+        public string Login { get; set; } = string.Empty;
 
         [Required]
         public string Password { get; set; } = string.Empty;

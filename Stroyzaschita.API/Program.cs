@@ -46,11 +46,19 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
-builder.Services.AddAuthorization();
-
-
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowBlazorUI", policy => {
+        policy.WithOrigins("http://localhost:5037")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
+app.UseCors("AllowBlazorUI");
+
+builder.Services.AddAuthorization();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
