@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stroyzaschita.API.Extensions;
 using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Shared.DTOs.User;
@@ -76,5 +77,15 @@ public class UserController: ControllerBase {
 
         await _userRepository.SaveChangesAsync();
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("me-from-token")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<UserDto>> GetCurrentUser() {
+        var userId = User.GetUserId();
+        var user = await _userRepository.GetByIdAsync(userId);
+        return user is null ? NotFound() : Ok(user);
     }
 }

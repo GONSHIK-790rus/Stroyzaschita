@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Stroyzaschita.API.Hubs;
 using Stroyzaschita.API.Middleware;
+using Stroyzaschita.API.Services;
 using Stroyzaschita.Application;
+using Stroyzaschita.Application.Common.Interfaces.Chat;
 using Stroyzaschita.Application.Common.Settings;
 using Stroyzaschita.Infrastructure;
 using Stroyzaschita.Persistence;
@@ -19,10 +21,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IChatNotifier, SignalRChatNotifier>();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddSharedServices();
+builder.Services.AddSignalR();
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
@@ -44,6 +48,19 @@ builder.Services.AddAuthentication(options => {
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
         ClockSkew = TimeSpan.Zero
     };
+
+    options.Events = new JwtBearerEvents {
+        OnMessageReceived = context => {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat")) {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddCors(options => {
@@ -56,9 +73,6 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build();
 app.UseCors("AllowBlazorUI");
-
-builder.Services.AddAuthorization();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
@@ -74,5 +88,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

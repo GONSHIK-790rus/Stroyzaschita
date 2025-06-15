@@ -5,20 +5,23 @@ using System.Security.Claims;
 namespace Stroyzaschita.UI.Contexts;
 
 public class AuthContext {
+    public Guid? UserId { get; private set; }
+    public string? Role { get; private set; }
     public bool IsAuthenticated { get; set; } = false;
     public string? Token { get; set; }
-    public string? Role { get; set; }
     public UserDto? CurrentUser { get; set; }
 
-    public void InitializeFromToken(string jwt) {
-        Token = jwt;
-        IsAuthenticated = true;
-
+    public void InitializeFromToken(string token) {
         var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(jwt);
+        var jwt = handler.ReadJwtToken(token);
 
-        Role = jwtToken.Claims
-            .FirstOrDefault(claim => claim.Type == ClaimTypes.Role)
-            ?.Value;
+        var userId = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        if (Guid.TryParse(userId, out var id))
+            UserId = id;
+
+        Role = role;
+        IsAuthenticated = true;
     }
 }

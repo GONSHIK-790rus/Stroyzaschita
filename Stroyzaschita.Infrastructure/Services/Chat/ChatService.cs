@@ -1,14 +1,19 @@
-﻿using Stroyzaschita.Domain.Entities;
+﻿using Stroyzaschita.Application.Common.Interfaces.Chat;
+using Stroyzaschita.Domain.Entities;
 using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Shared.DTOs.Chat;
 
-namespace Stroyzaschita.Application.Services.Chat;
+namespace Stroyzaschita.Infrastructure.Services.Chat;
 
 public class ChatService : IChatService {
     private readonly IMessageRepository _messageRepository;
+    private readonly IChatNotifier _chatNotifier;
+    private readonly IUserRepository _userRepository;
 
-    public ChatService(IMessageRepository messageRepository) {
+    public ChatService(IMessageRepository messageRepository, IChatNotifier chatNotifier, IUserRepository userRepository) {
         _messageRepository = messageRepository;
+        _chatNotifier = chatNotifier;
+        _userRepository = userRepository;
     }
 
     public async Task<IEnumerable<ChatUserDto>> GetChatUsersAsync(Guid currentUserId) {
@@ -43,6 +48,13 @@ public class ChatService : IChatService {
 
         await _messageRepository.SendMessageAsync(message);
 
+        await _chatNotifier.NotifyUserAsync(
+            request.ReceiverId, 
+            senderId, 
+            request.Text, 
+            message.CreatedAt
+        );
+
         return new MessageDto {
             Id = message.Id,
             SenderId = senderId,
@@ -50,5 +62,26 @@ public class ChatService : IChatService {
             Text = request.Text,
             SentAt = message.CreatedAt
         };
+    }
+
+    public async Task<IEnumerable<ChatUserDto>> GetAvailableUsersForNewChatAsync(Guid currentUserId) {
+        var currentUser = await _userRepository.GetByIdAsync(currentUserId);
+        if (currentUser is null)
+            throw new Exception($"Пользователь с ID {currentUserId} не найден");
+
+        var allUsers = await _userRepository.GetAllAsync();
+        IEnumerable<User> filtered;
+
+        if (currentUser.RoleId == 3) // Заказчик
+            filtered = allUsers.Where(user => user.Id != currentUserId && user.RoleId == 2); // только исполнители
+        else // Исполнитель или Админ
+            filtered = allUsers.Where(user => user.Id != currentUserId);
+
+        return filtered.Select(u => new ChatUserDto {
+            Id = u.Id,
+            Login = u.Login,
+            Name = u.UserProfile?.Name,
+            Role = u.Role?.Name
+        });
     }
 }

@@ -1,7 +1,174 @@
 ﻿@page "/chat"
 
-<h3>Chat</h3>
+@using System.Net.Http.Headers
+@using Stroyzaschita.Shared.DTOs.Chat
+@using Stroyzaschita.Shared.DTOs.User
+@using Stroyzaschita.UI.Interfaces
+@using Stroyzaschita.UI.Services
+
+@inject IChatClient ChatClient
+@inject HttpClient _http
+@inject TokenStorage TokenStorage
+@inject NavigationManager NavigationManager
+@inject Stroyzaschita.UI.Contexts.AuthContext AuthContext
+
+<PageTitle>Чат</PageTitle>
+
+@if (!isLoaded) {
+    <p>Загрузка...</p>
+}
+else {
+    <div style="display: flex; height: 80vh;">
+        <!-- Список собеседников -->
+        <div style="width: 25%; border-right: 2px solid #ccc; padding: 10px; overflow-y: auto;">
+            <h4>Собеседники</h4>
+            @foreach (var user in chatUsers) {
+                <div @onclick="() => SelectChat(user)"
+                style="cursor: pointer; padding: 8px; background-color: @(selectedUser?.Id == user.Id ? "#e0e0e0" : "transparent");">
+                    <b>@user.Name</b> (@user.Login)
+                </div>
+            }
+
+            <button @onclick="ToggleAvailableUsers" style="margin-top: 10px;">
+                @(showAvailableUsers ? "Скрыть доступных" : "Новый чат")
+            </button>
+
+            @if (showAvailableUsers && availableUsers.Any()) {
+                <hr />
+                <h5>Доступные пользователи</h5>
+                @foreach (var user in availableUsers) {
+                    <div @onclick="() => StartNewChat(user)"
+                    style="cursor: pointer; padding: 6px; background-color: #d4f4dd; margin-top: 5px;">
+                        <i>@user.Name</i> (@user.Login)
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Сообщения -->
+        <div style="flex-grow: 1; padding: 10px; display: flex; flex-direction: column;">
+            @if (selectedUser is null) {
+                <p>Выберите чат слева, чтобы начать общение</p>
+            }
+            else {
+                <h4>Чат с @(string.IsNullOrWhiteSpace(selectedUser?.Name) ? selectedUser?.Login : selectedUser?.Name)</h4>
+
+                <div style="flex-grow: 1; border: 1px solid #ccc; padding: 10px; overflow-y: auto; border-radius: 8px;">
+                    @foreach (var message in messages) {
+                        <div style="text-align:@(message.SenderId == currentUserId ? "right" : "left"); margin-bottom: 6px;">
+                            <span>@message.Text</span><br />
+                            <small>@message.SentAt.ToLocalTime().ToString("HH:mm")</small>
+                        </div>
+                    }
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <input @bind="newMessage" placeholder="Введите сообщение..." style="width: 80%;" />
+                    <button @onclick="SendMessage">Отправить</button>
+                </div>
+            }
+        </div>
+    </div>
+}
 
 @code {
+    private Guid currentUserId;
+    private bool isLoaded = false;
+    private bool showAvailableUsers = false;
 
+    private List<ChatUserDto> chatUsers = new();
+    private List<ChatUserDto> availableUsers = new();
+    private ChatUserDto? selectedUser;
+    private List<MessageDto> messages = new();
+
+    private string newMessage = "";
+
+    protected override async Task OnInitializedAsync() {
+        var token = await TokenStorage.GetTokenAsync();
+        if (string.IsNullOrWhiteSpace(token)) {
+            NavigationManager.NavigateTo("/unauthorized");
+            return;
+        }
+
+        if (AuthContext.UserId is not Guid userId) {
+            NavigationManager.NavigateTo("/unauthorized");
+            return;
+        }
+
+        currentUserId = userId;
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        Console.WriteLine("Перед try availableUsers");
+        try {
+            chatUsers = await _http.GetFromJsonAsync<List<ChatUserDto>>("api/chat/users") ?? new();
+            availableUsers = await _http.GetFromJsonAsync<List<ChatUserDto>>("api/chat/available-users") ?? new();
+
+            Console.WriteLine($"Доступно пользователей для нового чата: {availableUsers.Count}");
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Ошибка при загрузке пользователей: {ex.Message}");
+            chatUsers = new();
+            availableUsers = new();
+        }
+
+        await ChatClient.ConnectAsync(token);
+
+        ChatClient.OnMessageReceived += async (msg) => {
+            var isMyMessage = msg.SenderId == currentUserId;
+            var isFromSelectedUser = selectedUser != null &&
+                                     (msg.SenderId == selectedUser.Id || msg.ReceiverId == selectedUser.Id);
+
+            if (isFromSelectedUser) {
+                messages.Add(msg);
+                await InvokeAsync(StateHasChanged);
+            }
+        };
+
+        isLoaded = true;
+    }
+
+    private async Task SelectChat(ChatUserDto user) {
+        selectedUser = user;
+
+        try {
+            messages = await _http.GetFromJsonAsync<List<MessageDto>>($"api/chat/messages?receiverId={user.Id}") ?? new();
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Ошибка при загрузке сообщений: {ex.Message}");
+            messages = new();
+        }
+    }
+
+    private void StartNewChat(ChatUserDto user) {
+        selectedUser = user;
+        messages = new();
+        showAvailableUsers = false;
+    }
+
+    private async Task SendMessage() {
+        if (string.IsNullOrWhiteSpace(newMessage) || selectedUser is null)
+            return;
+
+        var request = new SendMessageRequest {
+            ReceiverId = selectedUser.Id,
+            Text = newMessage
+        };
+
+        try {
+            var response = await _http.PostAsJsonAsync("api/chat/send", request);
+            if (response.IsSuccessStatusCode) {
+                newMessage = "";
+            }
+            else {
+                Console.WriteLine($"Ошибка при отправке: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Ошибка отправки: {ex.Message}");
+        }
+    }
+
+    private void ToggleAvailableUsers() => showAvailableUsers = !showAvailableUsers;
+
+    public async ValueTask DisposeAsync() => await ChatClient.DisposeAsync();
 }

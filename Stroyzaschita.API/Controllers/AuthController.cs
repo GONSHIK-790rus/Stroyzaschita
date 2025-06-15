@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stroyzaschita.Application.Services.Auth;
-using Stroyzaschita.Domain.Repositories;
 using Stroyzaschita.Shared.DTOs.Auth;
 
 namespace Stroyzaschita.API.Controllers;
@@ -10,7 +9,6 @@ namespace Stroyzaschita.API.Controllers;
 [Route("api/[controller]")]
 public class AuthController: ControllerBase {
     private readonly IAuthService _authService;
-    private readonly IUserRepository _userRepository;
 
     public AuthController(IAuthService authService) {
         _authService = authService;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stroyzaschita.API.Extensions;
-using Stroyzaschita.Application.Services.Chat;
+using Stroyzaschita.Application.Common.Interfaces.Chat;
 using Stroyzaschita.Shared.DTOs.Chat;
 
 namespace Stroyzaschita.API.Controllers;
@@ -42,5 +42,14 @@ public class ChatController : ControllerBase {
         var userId = User.GetUserId();
         var message = await _chatService.SendMessageAsync(userId, request);
         return Ok(message);
+    }
+
+    [HttpGet("available-users")]
+    [ProducesResponseType(typeof(IEnumerable<ChatUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<IEnumerable<ChatUserDto>>> GetAvailableUsersForNewChat() {
+        var userId = User.GetUserId();
+        var users = await _chatService.GetAvailableUsersForNewChatAsync(userId);
+        return Ok(users);
     }
 }

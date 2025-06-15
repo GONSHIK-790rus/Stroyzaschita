@@ -1,14 +1,15 @@
-﻿@using Stroyzaschita.UI.Contexts
+﻿@using Stroyzaschita.Shared.DTOs.Chat
+@using Stroyzaschita.Shared.DTOs.User
+@using Stroyzaschita.UI.Contexts
 @using Stroyzaschita.UI.Interfaces
 @using Stroyzaschita.UI.Services
 @using System.Net.Http.Headers
-@using Stroyzaschita.Shared.DTOs.User
 
 @inject NavigationManager NavigationManager
 @inject TokenStorage TokenStorage
 @inject AuthContext AuthContext
 @inject IAuthService AuthService
-@inject HttpClient _http
+@inject HttpClient HttpClient
 
 @inherits LayoutComponentBase
 
@@ -19,13 +20,13 @@
     </a>
 
     @if (AuthContext.IsAuthenticated) {
-            <MudButton Color="Color.Primary"
-            Variant="Variant.Filled"
-            Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
-            class="rounded-lg"
-            OnClick="Logout">
-                Выйти
-            </MudButton>
+        <MudButton Color="Color.Primary"
+        Variant="Variant.Filled"
+        Style="position: absolute; top: 20px; right: 20px; z-index: 1000;"
+        class="rounded-lg"
+        OnClick="Logout">
+            Выйти
+        </MudButton>
     }
     else {
         <MudButton Color="Color.Primary"
@@ -61,14 +62,23 @@
 
 @code {
     void NavigateTo(string url) {
+        Console.WriteLine($"--- Переход к URL: {url}");
+        Console.WriteLine($"IsAuthenticated: {AuthContext.IsAuthenticated}");
+        Console.WriteLine($"URL получен: {url}");
         var protectedRoutes = new[] { "/make-request", "/chat" };
-        if (protectedRoutes.Contains(url) && !AuthService.IsAuthorized())
-            NavigationManager.NavigateTo("/unauthorized");
-        else
-            NavigationManager.NavigateTo(url);
+
+        url = url.Trim().ToLower();
+        Console.WriteLine($"URL получен: {url}");
+
+        bool isProtected = protectedRoutes.Contains(url);
+        bool isAuthorized = AuthContext.IsAuthenticated;
+        Console.WriteLine($"isProtected: {isProtected}, isAuthenticated: {AuthContext.IsAuthenticated}");
+
+        NavigationManager.NavigateTo(isProtected && !isAuthorized ? "/unauthorized" : url);
     }
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() {      
+        Console.WriteLine("OnInit entered");
 
         var token = await TokenStorage.GetTokenAsync();
         if (!string.IsNullOrWhiteSpace(token)) {
@@ -76,14 +86,17 @@
             AuthContext.Token = token;
             AuthContext.InitializeFromToken(token);
 
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try {
-                var user = await _http.GetFromJsonAsync<UserDto>("api/Users/full-user");
+                var user = await HttpClient.GetFromJsonAsync<UserDto>("api/users/me");
                 AuthContext.CurrentUser = user;
-                Console.WriteLine($"Пользователь загружен: {AuthContext.CurrentUser?.Name}, Роль: {AuthContext.CurrentUser?.Role} {AuthContext.CurrentUser?.Login}");
+                AuthContext.InitializeFromToken(token);
             }
-            catch {
-                await Logout();
+            catch (Exception ex) {
+                Console.WriteLine("Ошибка при загрузке текущего пользователя: " + ex.Message);
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
             }
         }
     }
@@ -93,7 +106,7 @@
         AuthContext.IsAuthenticated = false;
         AuthContext.CurrentUser = null;
         AuthContext.Token = null;
-        _http.DefaultRequestHeaders.Authorization = null;
+        HttpClient.DefaultRequestHeaders.Authorization = null;
         NavigationManager.NavigateTo("/");
     }
 }

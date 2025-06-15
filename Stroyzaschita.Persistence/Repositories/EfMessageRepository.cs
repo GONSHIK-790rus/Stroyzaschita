@@ -8,7 +8,7 @@ namespace Stroyzaschita.Persistence.Repositories;
 public class EfMessageRepository: IMessageRepository {
     private readonly AppDbContext _appDbContext;
 
-    EfMessageRepository(AppDbContext appDbContext) {
+    public EfMessageRepository(AppDbContext appDbContext) {
         _appDbContext = appDbContext;
     }
 

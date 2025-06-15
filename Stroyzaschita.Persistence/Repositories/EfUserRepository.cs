@@ -52,4 +52,11 @@ public class EfUserRepository : IUserRepository {
     public Task SaveChangesAsync() {
         return _AppDbContext.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<User>> GetAllAsync() {
+        return await _AppDbContext.Users
+            .Include(user => user.UserProfile)
+            .Include(user => user.Role)
+            .ToListAsync();
+    }
 }

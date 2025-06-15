@@ -12,6 +12,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IChatClient, ChatClient>();
 builder.Services.AddScoped<TokenStorage>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddSingleton<AuthContext>();

@@ -3,6 +3,7 @@
 namespace Stroyzaschita.Domain.Repositories;
 
 public interface IUserRepository {
+    Task<IEnumerable<User>> GetAllAsync();
     Task<User?> GetByIdAsync(Guid id);
     Task<User?> GetByIdWithProfileAsync(Guid userId);
     Task<User?> GetByLoginAsync(string login);
