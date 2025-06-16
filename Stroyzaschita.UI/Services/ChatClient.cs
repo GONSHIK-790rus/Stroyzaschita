@@ -20,18 +20,15 @@ public class ChatClient : IChatClient {
             .Build();
 
         _hubConnection.On<MessageDto>("ReceiveMessage", async (message) => {
-            Console.WriteLine($"Получено сообщение через SignalR: {message.Text}");
             if (OnMessageReceived != null)
                 await OnMessageReceived.Invoke(message);
         });
 
         _hubConnection.Reconnected += connectionId => {
-            Console.WriteLine($"SignalR переподключен: {connectionId}");
             return Task.CompletedTask;
         };
 
         await _hubConnection.StartAsync();
-        Console.WriteLine("SignalR: Подключение успешно установлено");
     }
 
     public async Task DisconnectAsync() {

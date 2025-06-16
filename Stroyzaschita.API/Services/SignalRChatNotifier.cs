@@ -28,7 +28,5 @@ public class SignalRChatNotifier : IChatNotifier {
             .Group(senderId.ToString())
             .SendAsync("ReceiveMessage", messageDto);
 
-        Console.WriteLine($"Отправка SignalR-сообщения для userId: {userId}, senderId: {senderId}, текст: {text}");
-
     }
 }

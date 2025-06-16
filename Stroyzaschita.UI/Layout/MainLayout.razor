@@ -62,25 +62,19 @@
 
 @code {
     void NavigateTo(string url) {
-        Console.WriteLine($"--- Переход к URL: {url}");
-        Console.WriteLine($"IsAuthenticated: {AuthContext.IsAuthenticated}");
-        Console.WriteLine($"URL получен: {url}");
         var protectedRoutes = new[] { "/make-request", "/chat" };
 
         url = url.Trim().ToLower();
-        Console.WriteLine($"URL получен: {url}");
 
         bool isProtected = protectedRoutes.Contains(url);
         bool isAuthorized = AuthContext.IsAuthenticated;
-        Console.WriteLine($"isProtected: {isProtected}, isAuthenticated: {AuthContext.IsAuthenticated}");
 
         NavigationManager.NavigateTo(isProtected && !isAuthorized ? "/unauthorized" : url);
     }
 
     protected override async Task OnInitializedAsync() {      
-        Console.WriteLine("OnInit entered");
-
         var token = await TokenStorage.GetTokenAsync();
+
         if (!string.IsNullOrWhiteSpace(token)) {
             AuthContext.IsAuthenticated = true;
             AuthContext.Token = token;

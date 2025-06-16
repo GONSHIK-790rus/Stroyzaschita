@@ -11,8 +11,6 @@ public class ChatHub : Hub {
         if (!string.IsNullOrWhiteSpace(userId))
             await Groups.AddToGroupAsync(Context.ConnectionId, userId);
 
-        Console.WriteLine($"SignalR: {userId} добавлен в группу {userId}");
-
         await base.OnConnectedAsync();
     }
 

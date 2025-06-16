@@ -85,6 +85,7 @@ else {
 
     protected override async Task OnInitializedAsync() {
         var token = await TokenStorage.GetTokenAsync();
+
         if (string.IsNullOrWhiteSpace(token)) {
             NavigationManager.NavigateTo("/unauthorized");
             return;
@@ -98,12 +99,9 @@ else {
         currentUserId = userId;
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        Console.WriteLine("Перед try availableUsers");
         try {
             chatUsers = await _http.GetFromJsonAsync<List<ChatUserDto>>("api/chat/users") ?? new();
             availableUsers = await _http.GetFromJsonAsync<List<ChatUserDto>>("api/chat/available-users") ?? new();
-
-            Console.WriteLine($"Доступно пользователей для нового чата: {availableUsers.Count}");
         }
         catch (Exception ex) {
             Console.WriteLine($"Ошибка при загрузке пользователей: {ex.Message}");

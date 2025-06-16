@@ -15,8 +15,8 @@ public class AuthContext {
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
 
-        var userId = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var userId = jwt.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+        var role = jwt.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value;
 
         if (Guid.TryParse(userId, out var id))
             UserId = id;

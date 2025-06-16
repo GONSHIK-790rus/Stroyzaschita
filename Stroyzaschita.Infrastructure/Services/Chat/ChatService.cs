@@ -75,13 +75,13 @@ public class ChatService : IChatService {
         if (currentUser.RoleId == 3) // Заказчик
             filtered = allUsers.Where(user => user.Id != currentUserId && user.RoleId == 2); // только исполнители
         else // Исполнитель или Админ
-            filtered = allUsers.Where(user => user.Id != currentUserId);
+            filtered = allUsers.Where(user => user.Id != currentUserId); // Кто угодно, кроме текущего пользователя
 
-        return filtered.Select(u => new ChatUserDto {
-            Id = u.Id,
-            Login = u.Login,
-            Name = u.UserProfile?.Name,
-            Role = u.Role?.Name
+        return filtered.Select(user => new ChatUserDto {
+            Id = user.Id,
+            Login = user.Login,
+            Name = user.UserProfile?.Name,
+            Role = user.Role?.Name
         });
     }
 }
